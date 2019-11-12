@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <link href="rola.css" rel= "stylesheet" type= "css">
+        <style>body{
+                
+                background: rgb(175,165,154); 
+                background: radial-gradient(circle, rgba(175,165,154,1) 50%, rgba(151,166,184,1) 100%);
+                
+                /*
+                background: rgb(187,177,166);
+                background: radial-gradient(circle, rgba(187,177,166,1) 58%, rgba(167,183,203,1) 100%);
+                */
+            }
+                
+            </style>
+        <meta charset="UTF-8">
+        <link href = "Roboto-Thin" rel= "stylesheed">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <title>Curvas de Bézier</title>
+    </head>
+
+    <body onLoad = init()>
+
+        <style>body{font-family: 'Roboto';font-style: thin;}</style>
+        
+        <h1 class = "rola" align = "center" style = "color: rgb(0, 0, 0);">Curvas de Bézier</h1>
+         <canvas id="myCanvas" class = "d-block mx-auto" width="1300" height="700" style="border:3px solid #000000; background-color:rgb(199, 199, 199);"></canvas></canvas>
+
+
+        <div class="d-flex justify-content-center">
+                <p id = "amount" class = "mr-3">Amount curves: 0</p>
+                <p id = "current"> Current curve: 0</p>
+        </div>
+
+
+        <div class="d-flex justify-content-center">
+            <button onclick = "newCurve()">Nova curva</button>
+            <button onclick = "deleteCurve()" >Deletar curva</button>
+            <button onclick = "buttonNotReady()" >Deletar ponto</button>
+            <button onclick = "nextCurve()">Próxima</button>
+            <button onclick = "previousCurve()">Anterior</button>
+        
+            <!--Adicionar um evento para quando alterar valor, chamar o metodo de desenhar novamente-->
+            Quantidade de retas:
+            <input onchange="lucas()"type="text" name="numeroAvaliacoes" value="1" style="width: 40px">
+        </div>
+
+        
+        
+
+        
+
+
+
+
+        <script>
+            //Variaveis globais para todo o codigo
+            var canvas, context, curvesArrayX, curvesArrayY, currentCurve, amountCurves; 
+            
+            function init(){
+                curvesArrayX = [];
+                curvesArrayY = [];
+                currentCurve = 0;
+                amountCurves = 0;
+                curvesArrayX[currentCurve] = [];
+                curvesArrayY[currentCurve] = [];
+                canvas = document.getElementById("myCanvas");
+                context = canvas.getContext("2d");
+            }
+            
+            function lucas(){
+                console.log("rola");
+            }
+            
+            function drawPoint(event){
+                document.getElementById("amount").innerHTML = "Amount Curves: "+ amountCurves;
+                document.getElementById("current").innerHTML = "Current Curve: "+ currentCurve;
+    
+                //Definindo as caracteristicas do ponto
+                var position = getMousePosition(event, canvas);
+                var pointRadius = 3;
+                context.fillStyle = "#ff2626";
+                
+                //Desenha o ponto
+                context.beginPath();
+                context.arc(position.x, position.y, pointRadius, 0, Math.PI * 2);
+                context.fill();
+                context.stroke();
+                //Verifica se ja existem pontos existentes e tenta tracar uma reta
+                var arraySize = curvesArrayX[currentCurve].length;
+                if(arraySize >= 1){ 
+                    drawLine(position);
+                }
+                //Adiciona o novo ponto ao array de pontos
+                curvesArrayX[currentCurve].push(position.x);
+                curvesArrayY[currentCurve].push(position.y);
+            }
+            function getMousePosition(event, canvas) {
+                var rect = canvas.getBoundingClientRect();
+                return {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top
+                }
+            }
+            function drawLine(position){
+                var arraySize = curvesArrayX[currentCurve].length;
+                if(arraySize >= 1){
+                    //verifica quantidade de pontos no array, antes de tentar criar uma reta
+                    var lastX = curvesArrayX[currentCurve][arraySize - 1];
+                    var lastY = curvesArrayY[currentCurve][arraySize - 1];
+                    context.beginPath();
+                    context.moveTo(lastX, lastY);
+                    context.lineTo(position.x, position.y);
+                    context.stroke();
+                }
+            }
+            function drawBezierCurve(){
+            }
+            function newCurve(){
+                amountCurves++;
+                currentCurve = amountCurves;
+                curvesArrayX[amountCurves] = [];
+                curvesArrayY[amountCurves] = [];
+                canvas.addEventListener("mousedown", drawPoint);
+                document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+                document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+            }
+            function nextCurve(){
+                if(currentCurve < amountCurves){
+                    currentCurve++;
+                }
+                document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+                document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+            }
+            function previousCurve(){
+                if(currentCurve > 0){
+                    currentCurve--;
+                }
+                document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+                document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+            }
+            function deleteCurve(){
+                curvesArrayX.splice(currentCurve, 1);
+                amountCurves--;
+                if(amountCurves > 0){
+                    currentCurve--;
+                }else{
+                    currentCurve = 0;
+                }
+                document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+                document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+            }
+           </script>
+
+    </body>
+
+</html>
