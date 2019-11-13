@@ -37,8 +37,8 @@
     }
             
     function drawPoint(event){
-        document.getElementById("amount").innerHTML = "Amount Curves: "+ amountCurves;
-        document.getElementById("current").innerHTML = "Current Curve: "+ currentCurve;
+        //Da um overwrite nos c-ontadores de curvas sendo mostrados
+        updateCountersOnDisplay();
     
         //Definindo as caracteristicas do ponto
         var position = getMousePosition(event, canvas);
@@ -50,7 +50,6 @@
         context.arc(position.x, position.y, pointRadius, 0, Math.PI * 2);
         context.fill();
         context.stroke();
-
 
         //Verifica se ja existem pontos existentes e tenta tracar uma reta
         var arraySize = curvesArrayX[currentCurve].length;
@@ -91,8 +90,7 @@
         curvesArrayX[amountCurves] = [];
         curvesArrayY[amountCurves] = [];
         canvas.addEventListener("mousedown", drawPoint);
-        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+        updateCountersOnDisplay()
     }
 
     function nextCurve(){
@@ -100,8 +98,7 @@
         if(currentCurve < amountCurves){
             currentCurve++;
         }
-        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+        updateCountersOnDisplay()
     }
 
     function previousCurve(){
@@ -125,8 +122,7 @@
             amountCurves = 0;
             currentCurve = 0;
         }
-        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+        updateCountersOnDisplay()
     }
 
     function cleanCanvas(){
@@ -138,6 +134,7 @@
         amountCurves = 0;
         curvesArrayX[currentCurve] = [];
         curvesArrayY[currentCurve] = [];
+        updateCountersOnDisplay();
     }
 
     function updateCanvas(){
@@ -163,4 +160,9 @@
         for(var i = 0; i < curvesArrayX.length;i++){
                 
         }
+    }
+
+    function updateCountersOnDisplay(){
+        document.getElementById("amount").innerHTML = "Amount Curves: "+ amountCurves;
+        document.getElementById("current").innerHTML = "Current Curve: "+ currentCurve;
     }
