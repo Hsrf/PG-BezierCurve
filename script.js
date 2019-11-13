@@ -1,3 +1,26 @@
+//Hugo Falcao - Recife, Brazil 12/11/2019
+
+/*
+    Coisas a serem resolvidas:
+            - Bugs:
+                - Fazer varias curvas, voltar ate uma das iniciais e depois apagar ela buga as demais
+                - Deletar varias curvas em seguida sem curvas existentes buga a criacao de novas
+
+            - Implementacao
+                - Feature de selecionar, mover e deletar pontos nao implementada
+                - Criacao de curvas em si nao implementada
+                - Ciclar entre objetos visiveis usuando checkcboxes (pontos, retas e curvas)
+                - Campo de definição de número de avaliações/retas
+
+            - Refatoramento
+                - Fazer design de botoes mais bonitos
+                - Refatorar codigo e retirar mas praticas do html e css
+
+
+*/
+    
+    
+  
     //Variaveis globais para todo o codigo
     var canvas, context, curvesArrayX, curvesArrayY, currentCurve, amountCurves; 
             
@@ -58,80 +81,86 @@
             context.moveTo(lastX, lastY);
             context.lineTo(x, y);
             context.stroke();
-            }
         }
+    }
 
-        function newCurve(){
-            //Inicializa e troca o cursor atual para uma nova curva
-            amountCurves++;
-            currentCurve = amountCurves;
-            curvesArrayX[amountCurves] = [];
-            curvesArrayY[amountCurves] = [];
-            canvas.addEventListener("mousedown", drawPoint);
-            document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-            document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+    function newCurve(){
+        //Inicializa e troca o cursor atual para uma nova curva
+        amountCurves++;
+        currentCurve = amountCurves;
+        curvesArrayX[amountCurves] = [];
+        curvesArrayY[amountCurves] = [];
+        canvas.addEventListener("mousedown", drawPoint);
+        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+    }
+
+    function nextCurve(){
+        //Cicla, dentre as curvas existente para a proxima
+        if(currentCurve < amountCurves){
+            currentCurve++;
         }
+        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+    }
 
-        function nextCurve(){
-            //Cicla, dentre as curvas existente para a proxima
-            if(currentCurve < amountCurves){
-                currentCurve++;
-            }
-            document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-            document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+    function previousCurve(){
+        //Cicla, dentre as curvas existente para a anterior
+        if(currentCurve > 0){
+            currentCurve--;
         }
+        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+    }
 
-        function previousCurve(){
-            //Cicla, dentre as curvas existente para a anterior
-            if(currentCurve > 0){
-                currentCurve--;
-            }
-            document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-            document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
-        }
-
-        function deleteCurve(){
-            //Deleta a curva atual
-            curvesArrayX.splice(currentCurve, 1);
+    function deleteCurve(){
+        //Deleta a curva atual
+        curvesArrayX.splice(currentCurve, 1);
+        
+        updateCanvas();
+        if(amountCurves > 0){
+            currentCurve--;
             amountCurves--;
-            if(amountCurves > 0){
-                //currentCurve--;
-            }else{
-                //currentCurve = 0;
-            }
-            
-            updateCanvas();
-            currentCurve
-            document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-            document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
-        }
-
-        function cleanCanvas(){
-            //Limpa o canvas inteiro
-            context.clearRect(0,0,1300, 700);
-            curvesArrayX = [];
-            curvesArrayY = [];
-            currentCurve = 0;
+        }else{
             amountCurves = 0;
-            curvesArrayX[currentCurve] = [];
-            curvesArrayY[currentCurve] = [];
+            currentCurve = 0;
         }
+        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
+        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+    }
 
-        function updateCanvas(){
-            context.clearRect(0,0,1300, 700);
-            for(var i = 0; i < curvesArrayX.length; i++){
-                for(var j = 0; j < curvesArrayX[i].length; j++){
-                    context.beginPath();
-                    context.arc(curvesArrayX[i][j], curvesArrayY[i][j], 3, 0, Math.PI * 2);
-                    context.fill();
-                    context.stroke();
+    function cleanCanvas(){
+        //Limpa o canvas inteiro
+        context.clearRect(0,0,1300, 700);
+        curvesArrayX = [];
+        curvesArrayY = [];
+        currentCurve = 0;
+        amountCurves = 0;
+        curvesArrayX[currentCurve] = [];
+        curvesArrayY[currentCurve] = [];
+    }
+
+    function updateCanvas(){
+        context.clearRect(0,0,1300, 700);
+        var lastX, lastY;
+        for(var i = 0; i < curvesArrayX.length; i++){
+            for(var j = 0; j < curvesArrayX[i].length; j++){
+                context.beginPath();
+                context.arc(curvesArrayX[i][j], curvesArrayY[i][j], 3, 0, Math.PI * 2);
+                context.fill();
+                if(j > 0){
+                    context.moveTo(curvesArrayX[i][j - 1], curvesArrayY[i][j - 1]);
+                    context.lineTo(curvesArrayX[i][j], curvesArrayY[i][j]);
                 }
-            }
-        }
-
-        function drawCurve(){
-            //This function uses De Casteljau's Algorithm to create Bezier Curves
-            for(var i = 0; i < curvesArrayX.length;i++){
                 
+                context.stroke();
             }
         }
+    }
+
+    function drawCurve(){
+        //This function uses De Casteljau's Algorithm to create Bezier Curves
+        for(var i = 0; i < curvesArrayX.length;i++){
+                
+        }
+    }
