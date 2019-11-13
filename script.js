@@ -106,8 +106,7 @@
         if(currentCurve > 0){
             currentCurve--;
         }
-        document.getElementById("log").innerHTML = "Amount Curves: "+ amountCurves;
-        document.getElementById("log2").innerHTML = "Current Curve: "+ currentCurve;
+        updateCountersOnDisplay();
     }
 
     function deleteCurve(){

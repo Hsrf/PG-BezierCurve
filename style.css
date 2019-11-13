@@ -1,4 +1,4 @@
-    body{
+    .body{
         background: rgb(177,168,159);
         background: radial-gradient(circle, rgba(177,168,159,1) 58%, rgba(102,108,115,1) 100%);
         font-family: 'Roboto';
@@ -6,6 +6,7 @@
     }
 
     h1{
+        text-align: center;
         color: rgb(2, 168, 57);
         font-family: 'Roboto';
         font-style: thin;
