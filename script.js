@@ -14,18 +14,19 @@
             - Refatoramento
                 - Fazer design descente do campo de numero de avaliações
                 - Refatorar codigo e retirar mas praticas do html e css
-
 */
     
     
   
     //Variaveis globais para todo o codigo
-    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves; 
+    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves, curveArrayX, curveArrayY; 
             
     function init(){
         //Inicializa as variaveis globais
         controlPointXArray = [];
         controlPointYArray = [];
+        curveArrayX = [];
+        curveArrayY = [];
         currentCurve = 0;
         amountCurves = 0;  
         controlPointXArray[0] = [];
