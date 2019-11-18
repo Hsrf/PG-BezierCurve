@@ -12,25 +12,25 @@
 
     <body onLoad = init() class = "body">
         <h1>Curvas de Bézier</h1>
-        <canvas id="myCanvas" class = "d-block mx-auto" width="1300" height="700"></canvas></canvas>
+        <canvas id="myCanvas" class = "d-block mx-auto" width="1300" height="800"></canvas></canvas>
 
         <div class="d-flex justify-content-center">
                 <p id = "amount" class = "mr-3">Amount Curves: 0</p>
                 <p id = "current"> Current Curve: 0</p>
         </div>
 
-        <div class="d-flex justify-content-center">
+        <div align = "center">
             <button onclick = "newCurve()">Nova curva</button>
+            <button onclick = "drawCurve(100)">Gerar curva</button>
             <button onclick = "deleteCurve()" >Deletar curva</button>
             <button onclick = "buttonNotReady()" >Deletar ponto</button>
             <button onclick = "nextCurve()">Próxima</button>
             <button onclick = "previousCurve()">Anterior</button>
             <button onclick = "cleanCanvas()">Limpar Canvas</button>
             <!--Adicionar um evento para quando alterar valor, chamar o metodo de desenhar novamente-->
-            Quantidade de retas:
+            <label>Quantidade de retas: </label>
             <input onchange="somefuntion()" type="text" name="numeroAvaliacoes" value="1" style="width: 40px">
         </div>
-
     </body>
 
     <!--Referenciando do meu arquivo js com os scripts-->

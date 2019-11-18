@@ -4,7 +4,6 @@
     Coisas a serem resolvidas:
             - Bugs:
                 - Fazer varias curvas, voltar ate uma das iniciais e depois apagar ela buga as demais
-                - Deletar varias curvas em seguida sem curvas existentes buga a criacao de novas
 
             - Implementacao
                 - Feature de selecionar, mover e deletar pontos nao implementada
@@ -13,25 +12,24 @@
                 - Campo de definição de número de avaliações/retas
 
             - Refatoramento
-                - Fazer design de botoes mais bonitos
+                - Fazer design descente do campo de numero de avaliações
                 - Refatorar codigo e retirar mas praticas do html e css
-
 
 */
     
     
   
     //Variaveis globais para todo o codigo
-    var canvas, context, curvesArrayX, curvesArrayY, currentCurve, amountCurves; 
+    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves; 
             
     function init(){
         //Inicializa as variaveis globais
-        curvesArrayX = [];
-        curvesArrayY = [];
+        controlPointXArray = [];
+        controlPointYArray = [];
         currentCurve = 0;
-        amountCurves = 0;
-        curvesArrayX[currentCurve] = [];
-        curvesArrayY[currentCurve] = [];
+        amountCurves = 0;  
+        controlPointXArray[0] = [];
+        controlPointYArray[0] = [];
         canvas = document.getElementById("myCanvas");
         context = canvas.getContext("2d");
     }
@@ -52,14 +50,36 @@
         context.stroke();
 
         //Verifica se ja existem pontos existentes e tenta tracar uma reta
-        var arraySize = curvesArrayX[currentCurve].length;
+        var arraySize = controlPointXArray[currentCurve].length;
         if(arraySize >= 1){ 
             drawLine(position.x, position.y);
         }
 
         //Adiciona o novo ponto ao array de pontos
-        curvesArrayX[currentCurve].push(position.x);
-        curvesArrayY[currentCurve].push(position.y);
+        controlPointXArray[currentCurve].push(position.x);
+        controlPointYArray[currentCurve].push(position.y);
+    }
+
+    function drawCurvePoint(x, y){
+        //Da um overwrite nos c-ontadores de curvas sendo mostrados
+        updateCountersOnDisplay();
+    
+        //Definindo as caracteristicas do ponto
+        var pointRadius = 3;
+        context.fillStyle = "#ff2626";
+                
+        //Desenha o ponto
+        context.beginPath();
+        context.arc(x, y, pointRadius, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+
+        //Verifica se ja existem pontos existentes e tenta tracar uma reta
+        var arraySize = controlPointXArray[currentCurve].length;
+        if(arraySize >= 1){ 
+            drawLine(x, y);
+        }
+
     }
 
     function getMousePosition(event, canvas) {
@@ -71,11 +91,11 @@
     }
 
     function drawLine(x, y){
-        var arraySize = curvesArrayX[currentCurve].length;
+        var arraySize = controlPointXArray[currentCurve].length;
         if(arraySize >= 1){
             //Verifica quantidade de pontos no array, antes de tentar criar uma reta
-            var lastX = curvesArrayX[currentCurve][arraySize - 1];
-            var lastY = curvesArrayY[currentCurve][arraySize - 1];
+            var lastX = controlPointXArray[currentCurve][arraySize - 1];
+            var lastY = controlPointYArray[currentCurve][arraySize - 1];
             context.beginPath();
             context.moveTo(lastX, lastY);
             context.lineTo(x, y);
@@ -87,8 +107,8 @@
         //Inicializa e troca o cursor atual para uma nova curva
         amountCurves++;
         currentCurve = amountCurves;
-        curvesArrayX[amountCurves] = [];
-        curvesArrayY[amountCurves] = [];
+        controlPointXArray[amountCurves] = [];
+        controlPointYArray[amountCurves] = [];
         canvas.addEventListener("mousedown", drawPoint);
         updateCountersOnDisplay()
     }
@@ -111,9 +131,15 @@
 
     function deleteCurve(){
         //Deleta a curva atual
-        curvesArrayX.splice(currentCurve, 1);
-        
+        controlPointXArray.splice(currentCurve, 1);
+        controlPointYArray.splice(currentCurve, 1);
+
+        if(currentCurve == 0){
+            controlPointXArray[currentCurve] = [];
+            controlPointYArray[currentCurve] = [];
+        }
         updateCanvas();
+
         if(amountCurves > 0){
             currentCurve--;
             amountCurves--;
@@ -127,26 +153,26 @@
     function cleanCanvas(){
         //Limpa o canvas inteiro
         context.clearRect(0,0,1300, 700);
-        curvesArrayX = [];
-        curvesArrayY = [];
+        controlPointXArray = [];
+        controlPointYArray = [];
         currentCurve = 0;
         amountCurves = 0;
-        curvesArrayX[currentCurve] = [];
-        curvesArrayY[currentCurve] = [];
+        controlPointXArray[currentCurve] = [];
+        controlPointYArray[currentCurve] = [];
         updateCountersOnDisplay();
     }
 
     function updateCanvas(){
         context.clearRect(0,0,1300, 700);
         var lastX, lastY;
-        for(var i = 0; i < curvesArrayX.length; i++){
-            for(var j = 0; j < curvesArrayX[i].length; j++){
+        for(var i = 0; i < controlPointXArray.length; i++){
+            for(var j = 0; j < controlPointXArray[i].length; j++){
                 context.beginPath();
-                context.arc(curvesArrayX[i][j], curvesArrayY[i][j], 3, 0, Math.PI * 2);
+                context.arc(controlPointXArray[i][j], controlPointYArray[i][j], 3, 0, Math.PI * 2);
                 context.fill();
                 if(j > 0){
-                    context.moveTo(curvesArrayX[i][j - 1], curvesArrayY[i][j - 1]);
-                    context.lineTo(curvesArrayX[i][j], curvesArrayY[i][j]);
+                    context.moveTo(controlPointXArray[i][j - 1], controlPointYArray[i][j - 1]);
+                    context.lineTo(controlPointXArray[i][j], controlPointYArray[i][j]);
                 }
                 
                 context.stroke();
@@ -154,11 +180,8 @@
         }
     }
 
-    function drawCurve(){
-        //This function uses De Casteljau's Algorithm to create Bezier Curves
-        for(var i = 0; i < curvesArrayX.length;i++){
-                
-        }
+    function deCasteljau(){
+
     }
 
     function updateCountersOnDisplay(){

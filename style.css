@@ -9,10 +9,23 @@
         text-align: center;
         color: rgb(2, 168, 57);
         font-family: 'Roboto';
-        font-style: thin;
-        
+        font-style: thin; 
     }
 
     #myCanvas{
         background-color:rgb(255, 255, 255);
     }
+
+    button{
+        background-color: rgb(114, 109, 109);
+        color: black;
+        border: 3px solid #555555;
+        margin: 4px 2px;
+        padding: 15px 28px;
+        text-align: center;
+      }
+      
+      button:hover{
+        background-color: #555555;
+        color: white;
+      }
