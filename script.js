@@ -19,7 +19,7 @@
     
   
     //Variaveis globais para todo o codigo
-    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves, curveArrayX, curveArrayY; 
+    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves, curveArrayX, curveArrayY, amountEvaluations; 
             
     function init(){
         //Inicializa as variaveis globais
@@ -33,6 +33,7 @@
         controlPointYArray[0] = [];
         canvas = document.getElementById("myCanvas");
         context = canvas.getContext("2d");
+        amountEvaluations = 100;
     }
             
     function drawPoint(event){
@@ -181,11 +182,62 @@
         }
     }
 
-    function deCasteljau(){
+    function deCasteljau(currentEvalutionPoint){
+        var u = currentEvalutionPoint / amountEvaluations;
+        var auxArrayX = [];
+        var auxArrayY = [];
 
+        for(var i = 0; i < controlPointXArray[currentCurve].length; i++){
+            auxArrayX[i] = controlPointXArray[currentCurve][i];
+            auxArrayY[i] = controlPointYArray[currentCurve][i];
+        }
+
+        console.log("X: " + auxArrayX);
+        console.log("Y: " + auxArrayY);
+
+
+        for(var k = 1; k < controlPointXArray[currentCurve].length; k++){
+            for(var i = 0; i < (controlPointXArray[currentCurve].length - k); i++){
+                auxArrayX[i] = (1 - u) * auxArrayX[i] + (u * auxArrayX[i + 1]);
+                auxArrayY[i] = (1 - u) * auxArrayY[i] + (u * auxArrayY[i + 1]); 
+            }
+        }
+        curveArrayX[currentCurve].push(auxArrayX[0]);
+        curveArrayY[currentCurve].push(auxArrayY[0]);
     }
+
+
+
 
     function updateCountersOnDisplay(){
         document.getElementById("amount").innerHTML = "Amount Curves: "+ amountCurves;
         document.getElementById("current").innerHTML = "Current Curve: "+ currentCurve;
+    }
+
+
+
+
+    function drawBezier(){
+        curveArrayX[currentCurve] = [];
+        curveArrayY[currentCurve] = [];
+
+        //Impedir que o usuario quebre o programa com uma ma entrada
+        if(amountEvaluations <= 0){
+            amountEvaluations = 1;
+        }
+        for(var i = 1; i <= amountEvaluations; i++){
+            //console.log("Tiago, o i eh: "+ i);
+            deCasteljau(i);
+        }
+
+        for(var i = 0; i < curveArrayX[currentCurve].length; i++){
+            //Desenha o ponto
+            //console.log(curveArrayX[currentCurve].length);
+            //console.log("Desenhando o ponto " + i + " X: " +curveArrayX[currentCurve][i] + "  e Y: " +curveArrayY[currentCurve][i])
+            context.fillStyle = "#ff2626";
+            context.beginPath();
+            context.arc(curveArrayX[currentCurve][i], curveArrayY[currentCurve][i], 1, 0, Math.PI * 2);
+            context.fill();
+            context.stroke();
+        }
     }
