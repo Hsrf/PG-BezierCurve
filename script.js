@@ -17,7 +17,7 @@
     
   
     //Variaveis globais para todo o codigo
-    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves, curveArrayX, curveArrayY, amountEvaluations, showControlPoints, showCurves, showLines;
+    var canvas, context, controlPointXArray, controlPointYArray, currentCurve, amountCurves, curveArrayX, curveArrayY, amountEvaluations, showControlPoints, showCurves, showLines, indicatorToMovePoint;
             
     function init(){
         //Inicializa as variaveis globais
@@ -44,13 +44,19 @@
         var pointRadius = 2;
         context.fillStyle = "#ff2626";
                 
-        //Desenha o ponto
-        if(showControlPoints){
-            context.beginPath();
-            context.arc(position.x, position.y, pointRadius, 0, Math.PI * 2);
-            context.fill();
+        //Checa se existem pontos perto de onde foi clickado para mover o ponto existente
+        indicatorToMovePoint = checkPointsNearby(position.x, position.y);
+        if(indicatorToMovePoint != -1){
+            canvas.addEventListener("mouseup", moveCurrentPoint);
+            //canvas.removeEventListener("mouseup", moveCurrentPoint);
+        }else{
+            //Desenha o  novo ponto
+            if(showControlPoints){
+                context.beginPath();
+                context.arc(position.x, position.y, pointRadius, 0, Math.PI * 2);
+                context.fill();
+            }
         }
-        
 
         //Verifica se ja existem pontos existentes e tenta tracar uma reta
         var arraySize = controlPointXArray[currentCurve].length;
@@ -66,6 +72,18 @@
         if(arraySize >= 2){
             drawBezier();
         }
+    }
+
+    function moveCurrentPoint(event){
+        var rect = canvas.getBoundingClientRect();
+        var newPosition = getMousePosition(event, canvas);
+        controlPointXArray[currentCurve][indicatorToMovePoint] = event.clientX - rect.left;
+        controlPointYArray[currentCurve][indicatorToMovePoint] = event.clientY - rect.top;
+        drawBezier();
+        //curveArrayX[currentCurve].pop();
+        //curveArrayY[currentCurve].pop();
+        clearCanvas();
+        reDrawExistingObjects();
     }
 
     function drawCurvePoint(x, y){
@@ -105,6 +123,7 @@
             var lastX = controlPointXArray[currentCurve][arraySize - 1];
             var lastY = controlPointYArray[currentCurve][arraySize - 1];
             context.beginPath();
+            context.strokeStyle = 'black';
             context.moveTo(lastX, lastY);
             context.lineTo(x, y);
             context.stroke();
@@ -144,7 +163,7 @@
         curveArrayX.splice(currentCurve, 1);
         curveArrayY.splice(currentCurve, 1);
         clearCanvas();
-        reDrawExistingObjects();
+        reDrawExistingObjects("#000000", 'black', 'black');
 
         if(currentCurve > 1){
             currentCurve--;
@@ -192,6 +211,7 @@
         }
         curveArrayX[currentCurve].push(auxArrayX[0]);
         curveArrayY[currentCurve].push(auxArrayY[0]);
+        console.log("Pontos recem calculados= X: "+ curveArrayX[currentCurve][curveArrayX[currentCurve].length - 1] + " Y: " + curveArrayY[currentCurve][curveArrayY[currentCurve].length - 1]);
     }
 
     function updateCountersOnDisplay(){
@@ -203,10 +223,9 @@
         curveArrayX[currentCurve] = [];
         curveArrayY[currentCurve] = [];
         clearCanvas();
-        reDrawExistingObjects();
+        reDrawExistingObjects("#000000", 'black', 'black');
 
         //Impedir que o usuario quebre o programa com uma ma entrada
-        console.log("Desenhando curva com :"+ amountEvaluations);
         if(amountEvaluations <= 0){
             amountEvaluations = 1;
         }
@@ -230,9 +249,9 @@
         context.clearRect(0,0,1300, 700);
     }
 
-    function reDrawExistingPoints(){
+    function reDrawExistingPoints(color){
         //Definindo as caracteristicas do ponto
-        context.fillStyle = "#ff2626";
+        context.fillStyle = color;
 
         //Varre o array dos pontos e os desenha
         for(var i = 1; i < controlPointXArray.length; i++){
@@ -245,7 +264,8 @@
         }
     }
 
-    function reDrawExistingCurves(){
+    function reDrawExistingCurves(color){
+        context.strokeStyle = color;
         //Varre o array das curvas e as desenha
         for(var i = 1; i < curveArrayX.length; i++){
             for(var j = 0; j < curveArrayX[i].length; j++){
@@ -257,7 +277,8 @@
         }
     }
 
-    function reDrawExistingLines(){
+    function reDrawExistingLines(color){
+        context.strokeStyle = color;
         //Varre o array dos pontos e utiliza eles para desenhar retas
         for(var i = 1; i < controlPointXArray.length; i++){
             for(var j = 0; j < controlPointXArray[i].length; j++){
@@ -273,10 +294,9 @@
 
     function updateAmountEvaluations(){
         amountEvaluations = document.getElementById("amountEvaluations").value;
-        console.log("Atualizando para: " + amountEvaluations);
         //Caso queira que se o usuario trocar a quantidade de avaliacoes as curvas antigas tb mudem, basta apagar os arrays da curva e recalcula-los com o novo valor de amountEvaluations
         clearCanvas();
-        reDrawExistingObjects();
+        reDrawExistingObjects("#000000", 'black', 'black');
     }
 
     function checkControlPoints(){
@@ -296,17 +316,65 @@
 
    function hideUnChecked(){
         clearCanvas();
-        reDrawExistingObjects();
+        reDrawExistingObjects("#000000", 'black', 'black');
     }
 
-    function reDrawExistingObjects(){
+    function reDrawExistingObjects(colorPoint, colorLine, colorCurve){
         if(showControlPoints){
-            reDrawExistingPoints();
+            reDrawExistingPoints(colorPoint);
         }
         if(showLines){
-            reDrawExistingLines();
+            reDrawExistingLines(colorLine);
         }
         if(showCurves){
-            reDrawExistingCurves();
+            reDrawExistingCurves(colorCurve);
+        }
+    }
+
+    function checkPointsNearby(x, y){
+        for(var i = 0; i < controlPointXArray[currentCurve].length; i++){
+            //Checa se o ponto onde o usuario clickou possui algum ponto ja desenhado a '1' unidade de distancia
+            if(controlPointXArray[currentCurve][i] >= x - 4 && controlPointXArray[currentCurve][i] <= x + 4 && controlPointYArray[currentCurve][i] >= y - 4 && controlPointYArray[currentCurve][i] <= y + 4){
+                console.log("Esta perto do ponto: " + i);
+                controlPointXArray[currentCurve].pop();
+                controlPointYArray[currentCurve].pop();
+
+                clearCanvas();
+                reDrawExistingObjects("#000000", 'black', 'black');
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    function switchColorSelectedObjects(){
+        clearCanvas();
+
+        //Pinta todos os elementos de preto
+        reDrawExistingObjects("#000000", 'black', 'black');
+
+        //Pinta a curva atual de colorido
+        context.fillStyle = '##ee0909';
+        context.strokeStyle = 'red';
+
+        for(var i = 0; i < controlPointXArray[currentCurve].length; i++){
+            context.beginPath();
+            //Desenha ponto pintado
+            context.arc(controlPointXArray[currentCurve][i], controlPointYArray[currentCurve][i], 2, 0, Math.PI * 2);
+            //Desenha linha pintada
+            if(i > 0){
+            context.moveTo(controlPointXArray[currentCurve][j - 1], controlPointYArray[currentCurve][j - 1]);
+            context.lineTo(controlPointXArray[currentCurve][j], controlPointYArray[currentCurve][j]);
+            }
+            context.fill();
+            context.stroke();
+        }
+
+        for(var j = 1; j < curveArrayX[currentCurve].length; j++){
+            //Desenha curva pintada
+            context.beginPath();
+            context.moveTo(curveArrayX[currentCurve][j - 1], curveArrayY[currentCurve][j - 1]);
+            context.lineTo(curveArrayX[currentCurve][j], curveArrayY[currentCurve][j]);
+            context.stroke();
         }
     }
