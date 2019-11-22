@@ -83,7 +83,7 @@
         //curveArrayX[currentCurve].pop();
         //curveArrayY[currentCurve].pop();
         clearCanvas();
-        reDrawExistingObjects();
+        switchColorSelectedObjects();
     }
 
     function drawCurvePoint(x, y){
@@ -137,6 +137,7 @@
         controlPointXArray[amountCurves] = [];
         controlPointYArray[amountCurves] = [];
         canvas.addEventListener("mousedown", drawPoint);
+        switchColorSelectedObjects();
         updateCountersOnDisplay()
     }
 
@@ -163,7 +164,7 @@
         curveArrayX.splice(currentCurve, 1);
         curveArrayY.splice(currentCurve, 1);
         clearCanvas();
-        reDrawExistingObjects("#000000", 'black', 'black');
+        switchColorSelectedObjects();
 
         if(currentCurve > 1){
             currentCurve--;
@@ -223,7 +224,7 @@
         curveArrayX[currentCurve] = [];
         curveArrayY[currentCurve] = [];
         clearCanvas();
-        reDrawExistingObjects("#000000", 'black', 'black');
+        switchColorSelectedObjects();
 
         //Impedir que o usuario quebre o programa com uma ma entrada
         if(amountEvaluations <= 0){
@@ -296,7 +297,7 @@
         amountEvaluations = document.getElementById("amountEvaluations").value;
         //Caso queira que se o usuario trocar a quantidade de avaliacoes as curvas antigas tb mudem, basta apagar os arrays da curva e recalcula-los com o novo valor de amountEvaluations
         clearCanvas();
-        reDrawExistingObjects("#000000", 'black', 'black');
+        switchColorSelectedObjects();
     }
 
     function checkControlPoints(){
@@ -316,7 +317,7 @@
 
    function hideUnChecked(){
         clearCanvas();
-        reDrawExistingObjects("#000000", 'black', 'black');
+        reDrawExistingObjects();
     }
 
     function reDrawExistingObjects(colorPoint, colorLine, colorCurve){
@@ -340,7 +341,7 @@
                 controlPointYArray[currentCurve].pop();
 
                 clearCanvas();
-                reDrawExistingObjects("#000000", 'black', 'black');
+                switchColorSelectedObjects();
                 return i;
             }
         }
