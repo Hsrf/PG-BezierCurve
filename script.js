@@ -215,20 +215,25 @@
         //console.log("Inicializando o curveArrayX da curva: " + currentCurve);
         curveArrayX[currentCurve] = [];
         curveArrayY[currentCurve] = [];
+        clearCanvas();
+        reDrawExistingObjects();
         //console.log("Tamanho do  arrayy: " + curveArrayX[currentCurve].length);
 
         //Impedir que o usuario quebre o programa com uma ma entrada
-        if(amountEvaluations <= 0 || amountEvaluations != Number){
+        if(amountEvaluations <= 0){
             amountEvaluations = 1;
         }
 
         for(var i = 1; i <= amountEvaluations; i++){
             deCasteljau(i);
+            //console.log("X "+ i +": " + curveArrayX[currentCurve][i]);
+            //console.log("Y "+ i +": " + curveArrayY[currentCurve][i]);
         }
+        
 
         for(var i = 0; i < curveArrayX[currentCurve].length; i++){
-            //Desenha o ponto
-            //console.log("Deveria estar desenhando curva aqui");
+            //Desenha as linhas que formam a curva
+            console.log("Desenhando o ponto "+i+ " X: " + curveArrayX[currentCurve][i] + " Y: " + curveArrayY[currentCurve][i]);
             context.fillStyle = "##000066";
             context.beginPath();
             context.moveTo(curveArrayX[currentCurve][i - 1], curveArrayY[currentCurve][i - 1]);
