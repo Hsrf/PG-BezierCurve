@@ -12,7 +12,7 @@
 
     <body onLoad = init() class = "body">
         <h1>Curvas de Bézier</h1>
-        <canvas id="myCanvas" class = "d-block mx-auto" width="1300" height="800"></canvas></canvas>
+        <canvas id="myCanvas" class = "d-block mx-auto" width="1300" height="700"></canvas></canvas>
         
         <input onchange="checkControlPoints()" type="checkbox" name="showControlPoints" value = true checked> Pontos <br>
         <input onchange="checkExisitingLines()" type="checkbox" name="showLines" value = true checked> Retas <br>
@@ -25,15 +25,14 @@
 
         <div align = "center">
             <button onclick = "newCurve()">Nova curva</button>
-            <button onclick = "drawBezier()">Gerar curva</button>
             <button onclick = "deleteCurve()" >Deletar curva</button>
             <button onclick = "notReady()" >Deletar ponto</button>
             <button onclick = "nextCurve()">Próxima</button>
             <button onclick = "previousCurve()">Anterior</button>
-            <button onclick = "clearCanvas()">Limpar Canvas</button>
+            <button onclick = "resetCanvas()">Limpar Canvas</button>
             <!--Adicionar um evento para quando alterar valor, chamar o metodo de desenhar novamente-->
             <label>Quantidade de retas: </label>
-            <input onchange="someFunction()" type="text" name="amountEvaluations" value="100" style="width: 40px">
+            <input onchange="updateAmountEvaluations()" type="text" id = "amountEvaluations" name="amountEvaluations" value="100" style="width: 40px">
         </div>
     </body>
 
