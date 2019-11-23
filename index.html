@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <link href="style.css" rel= "stylesheet" type= "text/css">
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <title>Curvas de Bézier</title>
+    </head>
+
+
+    <body onLoad = init() class = "body">
+        <h1>Curvas de Bézier</h1>
+        <canvas id="myCanvas" class = "d-block mx-auto" width="1300" height="700"></canvas></canvas>
+        
+        <input onchange="checkControlPoints()" type="checkbox" name="showControlPoints" value = true checked> Pontos <br>
+        <input onchange="checkExisitingLines()" type="checkbox" name="showLines" value = true checked> Retas <br>
+        <input onchange="checkExistingCurves()" type="checkbox" name="showCurves" value = true checked> Curvas <br>
+        
+        <div class="d-flex justify-content-center">
+                <p id = "amount" class = "mr-3">Amount Curves: 0</p>
+                <p id = "current"> Current Curve: 0</p>
+        </div>
+
+        <div align = "center">
+            <button onclick = "newCurve()">Nova curva</button>
+            <button onclick = "deleteCurve()" >Deletar curva</button>
+            <button onclick = "notReady()" >Deletar ponto</button>
+            <button onclick = "nextCurve()">Próxima</button>
+            <button onclick = "previousCurve()">Anterior</button>
+            <button onclick = "resetCanvas()">Limpar Canvas</button>
+            <!--Adicionar um evento para quando alterar valor, chamar o metodo de desenhar novamente-->
+            <label>Quantidade de retas: </label>
+            <input onchange="updateAmountEvaluations()" type="text" id = "amountEvaluations" name="amountEvaluations" value="100" style="width: 40px">
+        </div>
+    </body>
+
+    <!--Referenciando do meu arquivo js com os scripts-->
+    <script type="text/javascript" src="script.js"></script>
+
+</html>
